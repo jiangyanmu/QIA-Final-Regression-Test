@@ -25,3 +25,33 @@ def RSI(d, df):
     df["rsi_sign"] = 0
     df.loc[df["rsi"] < 20, "rsi_sign"] = 1
     df.loc[df["rsi"] > 80, "rsi_sign"] = -1
+
+
+# 1️⃣ 五日均線
+def calc_MA5(df, period=5):
+    """
+    計算五日均線
+    """
+    df["MA5"] = df["收盤價"].rolling(period).mean()
+    return df
+
+
+# 2️⃣ 布林軌道
+def calc_Bollinger(df, n=20, k=2):
+    """
+    計算布林帶
+    """
+    df["BB_MA"] = df["收盤價"].rolling(n).mean()
+    df["BB_STD"] = df["收盤價"].rolling(n).std()
+    df["BB_Upper"] = df["BB_MA"] + k * df["BB_STD"]
+    df["BB_Lower"] = df["BB_MA"] - k * df["BB_STD"]
+    return df
+
+
+# 3️⃣ 昨天漲幅
+def calc_prev_gain(df):
+    """
+    計算昨天漲幅
+    """
+    df["prev_gain"] = (df["收盤價"] - df["收盤價"].shift(1)) / df["收盤價"].shift(1)
+    return df
