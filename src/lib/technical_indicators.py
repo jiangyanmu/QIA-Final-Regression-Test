@@ -78,3 +78,21 @@ def calc_Bias(df, period=20):
     
     df['Bias'] = (df['收盤價'] - df[ma_col]) / df[ma_col] * 100 # 乘以100變成百分比
     return df
+
+
+# 6️⃣ 三日均線
+def calc_MA3(df, period=3):
+    """
+    計算三日均線
+    """
+    df["MA3"] = df["收盤價"].rolling(period).mean()
+    return df
+
+
+# 7️⃣ 十日均線
+def calc_MA10(df, period=10):
+    """
+    計算十日均線
+    """
+    df["MA10"] = df["收盤價"].rolling(period).mean()
+    return df
