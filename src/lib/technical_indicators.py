@@ -55,3 +55,26 @@ def calc_prev_gain(df):
     """
     df["prev_gain"] = (df["收盤價"] - df["收盤價"].shift(1)) / df["收盤價"].shift(1)
     return df
+
+
+# 4️⃣ 二十日均線
+def calc_MA20(df, period=20):
+    """
+    計算二十日均線
+    """
+    df["MA20"] = df["收盤價"].rolling(period).mean()
+    return df
+
+
+# 5️⃣ 乖離率 (Bias)
+def calc_Bias(df, period=20):
+    """
+    計算乖離率 (收盤價 vs. N日均線)
+    """
+    ma_col = f'MA{period}'
+    if ma_col not in df.columns:
+        # 如果均線不存在，先計算它
+        df[ma_col] = df["收盤價"].rolling(period).mean()
+    
+    df['Bias'] = (df['收盤價'] - df[ma_col]) / df[ma_col] * 100 # 乘以100變成百分比
+    return df
