@@ -1,13 +1,16 @@
-# 回測策略三: 裸K (均線排列)
-from lib.technical_indicators import calc_MA3, calc_MA5, calc_MA10
+from lib.technical_indicators import calc_ma
 
 
-def backtest_strategy_three(df):
+def backtest_strategy_three(df, ma_short=3, ma_medium=5, ma_long=10):
     df = df.copy()
     # 1. 計算所需指標
-    df = calc_MA3(df)
-    df = calc_MA5(df)
-    df = calc_MA10(df)
+    df = calc_ma(df, period=ma_short)
+    df = calc_ma(df, period=ma_medium)
+    df = calc_ma(df, period=ma_long)
+
+    short_ma_col = f'MA{ma_short}'
+    medium_ma_col = f'MA{ma_medium}'
+    long_ma_col = f'MA{ma_long}'
 
     L = len(df)
     if L < 2:
@@ -31,7 +34,7 @@ def backtest_strategy_three(df):
         # --- 進場邏輯 (使用前一天的訊號，今天開盤進場) ---
         if position == 0:
             # 檢查前一天的進場條件: 均線多頭排列
-            if prev_row["MA3"] > prev_row["MA5"] and prev_row["MA5"] > prev_row["MA10"]:
+            if prev_row[short_ma_col] > prev_row[medium_ma_col] and prev_row[medium_ma_col] > prev_row[long_ma_col]:
                 # 今天開盤進場
                 avg_cost = row["開盤價"]
                 position = 1
@@ -39,7 +42,7 @@ def backtest_strategy_three(df):
         # --- 出場邏輯 (當日判斷，當日收盤出場) ---
         if position == 1:
             # 檢查出場條件: 3日均線下穿5日均線
-            if row["MA3"] < row["MA5"]:
+            if row[short_ma_col] < row[medium_ma_col]:
                 exit_price = row["收盤價"]
                 ret = exit_price - avg_cost
                 df.at[idx, "ret"] = ret

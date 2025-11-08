@@ -2,10 +2,10 @@
 from lib.technical_indicators import calc_Bollinger, calc_MA5, calc_prev_gain
 
 
-def backtest_strategy(df):
+def backtest_strategy(df, ma_period=5, bb_period=20, bb_std=2, drop_threshold=0.5):
     df = df.copy()
-    df = calc_MA5(df).copy()
-    df = calc_Bollinger(df).copy()
+    df = calc_MA5(df, period=ma_period).copy()
+    df = calc_Bollinger(df, n=bb_period, k=bb_std).copy()
     df = calc_prev_gain(df).copy()
 
     L = len(df)
@@ -31,7 +31,7 @@ def backtest_strategy(df):
         # 處理進場邏輯 (適用於今天)
         if yesterday_triggered_bb and position == 0:
             # 檢查今天開盤是否滿足第二階段訊號
-            if row["開盤價"] >= prev_close - prev_gain / 2:
+            if row["開盤價"] >= prev_close - prev_gain * drop_threshold:
                 # 使用今天的開盤價進場，並重置訊號
                 avg_cost = row["開盤價"]
                 position = 1

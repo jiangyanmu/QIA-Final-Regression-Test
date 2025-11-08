@@ -1,11 +1,13 @@
-# 回測策略二: 五日線與二十日線交叉 (黃金交叉版本)
-from lib.technical_indicators import calc_MA5, calc_MA20
+from lib.technical_indicators import calc_ma
 
-def backtest_strategy_two(df):
+def backtest_strategy_two(df, short_ma_period=5, long_ma_period=20):
     df = df.copy()
     # 1. 計算所需指標
-    df = calc_MA5(df)
-    df = calc_MA20(df)
+    df = calc_ma(df, period=short_ma_period)
+    df = calc_ma(df, period=long_ma_period)
+
+    short_ma_col = f'MA{short_ma_period}'
+    long_ma_col = f'MA{long_ma_period}'
 
     L = len(df)
     if L < 2:
@@ -30,7 +32,7 @@ def backtest_strategy_two(df):
         if position == 0 and i > 1: # 需要i-2的資料，所以從i>1開始判斷
             prev_prev_row = df.iloc[i-2]
             # 檢查前一天是否發生黃金交叉
-            if prev_prev_row['MA5'] < prev_prev_row['MA20'] and prev_row['MA5'] > prev_row['MA20']:
+            if prev_prev_row[short_ma_col] < prev_prev_row[long_ma_col] and prev_row[short_ma_col] > prev_row[long_ma_col]:
                 # 今天開盤進場
                 avg_cost = row["開盤價"]
                 position = 1
@@ -38,7 +40,7 @@ def backtest_strategy_two(df):
         # --- 出場邏輯 (當日判斷，當日收盤出場) ---
         if position == 1:
             mid_price = (row["開盤價"] + row["收盤價"]) / 2
-            if mid_price < row["MA5"]:
+            if mid_price < row[short_ma_col]:
                 exit_price = row["收盤價"]
                 ret = exit_price - avg_cost
                 df.at[idx, "ret"] = ret

@@ -1,0 +1,49 @@
+# === Python 一般忽略項 ===
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.dll
+*.log
+*.sqlite3
+*.db
+
+# === 虛擬環境（venv、uv、conda）===
+.venv/
+venv/
+env/
+.conda/
+
+# === Jupyter Notebook 產生的暫存檔 ===
+.ipynb_checkpoints/
+*.ipynb_save
+*.nbconvert/
+
+# === 專案暫存、測試輸出 ===
+.DS_Store
+*.tmp
+*.bak
+*.swp
+*.csv
+*.xlsx
+*.parquet
+output/
+data/
+results/
+cache/
+
+# === 編譯產物或二進位檔 ===
+build/
+dist/
+*.egg-info/
+*.spec
+
+# === IDE 相關設定（VSCode、PyCharm）===
+.vscode/
+.idea/
+*.code-workspace
+
+# === OS 系統檔案 ===
+Thumbs.db
+desktop.ini

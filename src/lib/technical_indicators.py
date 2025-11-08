@@ -27,6 +27,15 @@ def RSI(d, df):
     df.loc[df["rsi"] > 80, "rsi_sign"] = -1
 
 
+def calc_ma(df, period):
+    """
+    Calculates the moving average for a given period.
+    """
+    col_name = f'MA{period}'
+    df[col_name] = df['收盤價'].rolling(period).mean()
+    return df
+
+
 # 1️⃣ 五日均線
 def calc_MA5(df, period=5):
     """
