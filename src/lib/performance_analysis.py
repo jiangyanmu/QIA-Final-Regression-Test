@@ -18,7 +18,7 @@ def result_F(df):
     return result
 
 
-def calculate_strategy_one_performance(df_backtest_output: pd.DataFrame) -> dict:
+def calculate_strategy_performance(df_backtest_output: pd.DataFrame) -> dict:
     """
     從 backtest_strategy 函數的輸出 DataFrame 中計算詳細的績效指標。
 
