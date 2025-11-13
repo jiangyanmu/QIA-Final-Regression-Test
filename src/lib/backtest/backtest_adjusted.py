@@ -225,6 +225,51 @@ def sensitivity_analysis_three(
     results_df = pd.DataFrame(results_list)
     return results_df
 
+def sensitivity_analysis_four(
+    df_original,
+    backtest_func,
+    performance_func,
+    param_ranges,
+    iterations=100
+):
+    """
+    三參數敏感度分析 (bb_period, bb_std, ma_long_period)
+    """
+    results_list = []
+    print(f"準備進行 {iterations} 次隨機參數測試...")
+
+    for _ in tqdm(range(iterations), desc="執行進度"):
+        # 隨機生成三個參數
+        bb_period = random.randint(*param_ranges['bb_period'])
+        bb_std = round(random.uniform(*param_ranges['bb_std']), 2)  # float
+        ma_long_period = random.randint(*param_ranges['ma_long_period'])
+
+        # 回測
+        df_result = backtest_func(
+            df_original.copy(),
+            bb_period=bb_period,
+            bb_std=bb_std,
+            ma_long_period=ma_long_period
+        )
+
+        # 計算績效
+        df_result['entry'] = (df_result['position'] == 1) & (df_result['position'].shift(1) == 0)
+        df_result['exit'] = (df_result['position'] == 0) & (df_result['position'].shift(1) == 1)
+        performance = performance_func(df_result)
+
+        # 儲存結果
+        run_results = {
+            'bb_period': bb_period,
+            'bb_std': bb_std,
+            'ma_long_period': ma_long_period
+        }
+        run_results.update(performance)
+        results_list.append(run_results)
+
+    results_df = pd.DataFrame(results_list)
+    return results_df
+
+
 def plot_strategy_sensitivity(
     results_df: pd.DataFrame,
     equity_col: str = '最終權益 (Mark-to-Market)',
