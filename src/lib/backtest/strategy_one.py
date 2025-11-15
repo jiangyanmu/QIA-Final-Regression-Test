@@ -24,7 +24,7 @@ def backtest_strategy(df, ma_period=5, bb_period=20, bb_std=2, drop_threshold=0.
     """
     # 複製一份 DataFrame 以免修改到原始傳入的資料
     df = df.copy()
-    
+
     # --- 步驟一：計算所需技術指標 ---
     # 雖然 MA5 在此策略邏輯中未使用，但保留以便未來擴展或分析
     df = calc_MA5(df, period=ma_period).copy()
@@ -45,7 +45,7 @@ def backtest_strategy(df, ma_period=5, bb_period=20, bb_std=2, drop_threshold=0.
     position = 0          # 當前的持倉狀態
     avg_cost = 0.0        # 持倉的平均成本
     cum_ret = 0.0         # 已實現的累計報酬
-    
+
     # 策略狀態變數
     yesterday_triggered_bb = False  # 標記前一天收盤是否已觸發布林通道突破信號
     prev_close = 0.0                # 觸發信號當天的收盤價
@@ -64,7 +64,7 @@ def backtest_strategy(df, ma_period=5, bb_period=20, bb_std=2, drop_threshold=0.
                 # 條件滿足，使用今天的開盤價進場
                 avg_cost = row["開盤價"]
                 position = 1
-            
+
             # 無論是否進場，這個信號在今天處理完畢後都應重置
             yesterday_triggered_bb = False
 
@@ -75,7 +75,7 @@ def backtest_strategy(df, ma_period=5, bb_period=20, bb_std=2, drop_threshold=0.
             ret = exit_price - avg_cost  # 計算這筆交易的報酬
             df.at[idx, "ret"] = ret      # 記錄報酬
             cum_ret += ret               # 累加到已實現報酬中
-            
+
             # 平倉，重置持倉狀態
             position = 0
             avg_cost = 0.0
