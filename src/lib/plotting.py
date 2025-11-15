@@ -124,3 +124,63 @@ def plot_strategy_results(df: pd.DataFrame, title: str, indicators: list):
     plt.show()
 
     # return fig
+
+def plot_kline_from_csv(filepath: str, title: str = "價格走勢圖", show_volume: bool = False):
+    """
+    根據檔案路徑讀取 CSV，繪製收盤價走勢圖，可選是否顯示成交量圖。
+    CSV 欄位需包含：年月日, 開盤價, 最高價, 最低價, 收盤價, 成交量
+    """
+    import pandas as pd
+    import matplotlib.pyplot as plt
+    import matplotlib.font_manager as fm
+    import platform
+
+    # --- 讀取資料 ---
+    df = pd.read_csv(filepath)
+
+    # 若包含 "年月日"，轉為 datetime 並設為 index
+    if "年月日" in df.columns:
+        df["年月日"] = pd.to_datetime(df["年月日"])
+        df.set_index("年月日", inplace=True)
+
+    # --- 設定中文字體 ---
+    system = platform.system()
+    if system == "Windows":
+        font_path = "C:/Windows/Fonts/msjh.ttc"
+    elif system == "Darwin":
+        font_path = "/System/Library/Fonts/PingFang.ttc"
+    else:
+        font_path = "/usr/share/fonts/truetype/wqy/wqy-microhei.ttc"
+
+    try:
+        font = fm.FontProperties(fname=font_path, size=12)
+    except FileNotFoundError:
+        font = fm.FontProperties(size=12)
+
+    # --- 建立子圖 ---
+    if show_volume:
+        fig, (ax1, ax2) = plt.subplots(
+            2, 1, figsize=(20, 10),
+            sharex=True,
+            gridspec_kw={"height_ratios": [3, 1]}
+        )
+    else:
+        fig, ax1 = plt.subplots(
+            1, 1, figsize=(20, 8)
+        )
+
+    # --- 繪製收盤價 ---
+    ax1.set_title(f"{title} - 收盤價走勢", fontproperties=font)
+    ax1.grid(True)
+    ax1.plot(df.index, df["收盤價"], label="收盤價")
+    ax1.legend(prop=font)
+
+    # --- 如果 show_volume=True → 繪製成交量 ---
+    if show_volume and "成交量" in df.columns:
+        ax2.set_title(f"{title} - 成交量", fontproperties=font)
+        ax2.grid(True)
+        ax2.bar(df.index, df["成交量"], width=1.0, alpha=0.7)
+
+    plt.xlabel("日期", fontproperties=font)
+    plt.tight_layout()
+    plt.show()
