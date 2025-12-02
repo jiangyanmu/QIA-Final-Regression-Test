@@ -25,11 +25,8 @@ env/
 *.tmp
 *.bak
 *.swp
-*.csv
-*.xlsx
 *.parquet
 output/
-data/
 results/
 cache/
 

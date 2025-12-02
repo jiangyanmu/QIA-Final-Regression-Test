@@ -39,7 +39,7 @@ def plot_price_indicators(df: pd.DataFrame, title: str, indicators: list):
 # === 2️⃣ 繪製累積報酬率 ===
 def plot_cumulative_returns(df: pd.DataFrame, title: str):
     font = get_chinese_font(12)
-    plt.figure(figsize=(20, 15))
+    plt.figure(figsize=(20, 5))
     plt.plot(df.index, df["cus"], label="策略累積報酬")
     plt.plot(df.index, df["BH"], label="買進持有累積報酬")
     plt.title(f"{title} - 累積報酬率", fontproperties=font)
